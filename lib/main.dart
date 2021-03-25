@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:expenses/components/TransactionForm.dart';
 import 'package:flutter/material.dart';
+import 'components/Chart.dart';
 import 'components/TransactionList.dart';
 import 'models/Transaction.dart';
 
@@ -13,6 +14,20 @@ class ExpensesApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: HomePage(),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        accentColor: Colors.amber,
+        fontFamily: 'Nunito',
+        appBarTheme: AppBarTheme(
+          textTheme: ThemeData.light().textTheme.copyWith(
+                headline6: TextStyle(
+                  fontFamily: 'Nunito',
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+        ),
+      ),
     );
   }
 }
@@ -23,22 +38,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _transactions = [
-    Transaction(
-      't1',
-      'Novo Tênis de Corrida',
-      310.70,
-      DateTime.now(),
-    ),
-    Transaction(
-      't2',
-      'Conta Luz',
-      222.60,
-      DateTime.now(),
-    ),
-  ];
+  final List<Transaction> _transactions = [];
 
-  addTransaction(String title, double value) {
+  List<Transaction> get _recentTrasactions {
+    return _transactions.where((transaction) {
+      return transaction.date
+          .isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
+  }
+
+  _addTransaction(String title, double value) {
     final newTransaction = Transaction(
       Random().nextDouble().toString(),
       title,
@@ -57,7 +66,7 @@ class _HomePageState extends State<HomePage> {
     showModalBottomSheet(
         context: context,
         builder: (_) {
-          return TransactionForm(addTransaction);
+          return TransactionForm(_addTransaction);
         });
   }
 
@@ -65,28 +74,22 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Despesas'),
-        actions: [
-          IconButton(icon: Icon(Icons.add), 
-          onPressed: () => _openTransactionForm(context)
-        )],
+        title: Text('Despesas Pessoais'),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              width: double.infinity,
-              child: Card(
-                child: Text('Gráfico'),
-                elevation: 5,
-              ),
-            ),
+            Chart(_recentTrasactions),
             TransactionList(_transactions),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
         onPressed: () => _openTransactionForm(context),
       ),
     );
