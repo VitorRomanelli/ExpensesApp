@@ -47,12 +47,12 @@ class _HomePageState extends State<HomePage> {
     }).toList();
   }
 
-  _addTransaction(String title, double value) {
+  _addTransaction(String title, double value, DateTime date) {
     final newTransaction = Transaction(
       Random().nextDouble().toString(),
       title,
       value,
-      DateTime.now(),
+      date,
     );
 
     setState(() {
@@ -60,6 +60,12 @@ class _HomePageState extends State<HomePage> {
     });
 
     Navigator.of(context).pop();
+  }
+
+  _removeTransaction(String id) {
+    setState(() {
+      _transactions.removeWhere((element) => element.id == id);
+    });
   }
 
   _openTransactionForm(BuildContext context) {
@@ -72,16 +78,28 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      title: Text('Despesas Pessoais'),
+      centerTitle: true,
+    );
+
+    final availableHeight = MediaQuery.of(context).size.height -
+        appBar.preferredSize.height -
+        MediaQuery.of(context).padding.top;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Despesas Pessoais'),
-        centerTitle: true,
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Chart(_recentTrasactions),
-            TransactionList(_transactions),
+            Container(
+              height: availableHeight * 0.25,
+              child: Chart(_recentTrasactions),
+            ),
+            Container(
+              height: availableHeight * 0.75,
+              child: TransactionList(_transactions, _removeTransaction),
+            ),
           ],
         ),
       ),
@@ -92,6 +110,7 @@ class _HomePageState extends State<HomePage> {
         ),
         onPressed: () => _openTransactionForm(context),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
