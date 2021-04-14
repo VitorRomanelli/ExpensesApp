@@ -44,56 +44,63 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          children: [
-            TextField(
-              controller: _titleController,
-              onSubmitted: (_) => submit(),
-              decoration: InputDecoration(
-                labelText: 'Título',
-              ),
-            ),
-            TextField(
-              controller: _valueController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              onSubmitted: (_) => submit(),
-              decoration: InputDecoration(
-                labelText: 'Valor (R\$)',
-              ),
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(_date == null
-                      ? 'Nenhuma data selecionada!'
-                      : DateFormat('d MMM y').format(_date)),
+    return SingleChildScrollView(
+      child: Card(
+        elevation: 5,
+        child: Padding(
+          padding: EdgeInsets.only(
+            top: 15,
+            left: 15,
+            right: 15,
+            bottom: 15 + MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            children: [
+              TextField(
+                controller: _titleController,
+                onSubmitted: (_) => submit(),
+                decoration: InputDecoration(
+                  labelText: 'Título',
                 ),
-                FlatButton(
-                  textColor: Theme.of(context).primaryColor,
-                  child: Text(
-                    "Selecionar Data",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              TextField(
+                controller: _valueController,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                onSubmitted: (_) => submit(),
+                decoration: InputDecoration(
+                  labelText: 'Valor (R\$)',
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(_date == null
+                        ? 'Nenhuma data selecionada!'
+                        : DateFormat('d MMM y').format(_date)),
                   ),
-                  onPressed: _showDatePicker,
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                RaisedButton(
-                  onPressed: submit,
-                  color: Theme.of(context).primaryColor,
-                  textColor: Colors.white,
-                  child: Text('Nova transação'),
-                ),
-              ],
-            )
-          ],
+                  FlatButton(
+                    textColor: Theme.of(context).primaryColor,
+                    child: Text(
+                      "Selecionar Data",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: _showDatePicker,
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  RaisedButton(
+                    onPressed: submit,
+                    color: Theme.of(context).primaryColor,
+                    textColor: Colors.white,
+                    child: Text('Nova transação'),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
